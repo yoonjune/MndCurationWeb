@@ -1,14 +1,20 @@
 package com.mndcuration.web.activities;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
+import android.graphics.Point;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.view.Display;
 import android.view.KeyEvent;
+import android.view.WindowManager;
 import android.webkit.WebSettings;
+import android.webkit.WebSettings.LayoutAlgorithm;
+import android.webkit.WebSettings.ZoomDensity;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.Toast;
@@ -36,15 +42,28 @@ public class MainActivity extends Activity {
 		this.setContentView(R.layout.activity_main);
 
 		webview = (WebView) findViewById(R.id.webview2);
-		WebSettings set = webview.getSettings();
-		set.setJavaScriptEnabled(true);
-		set.setCacheMode(WebSettings.LOAD_NO_CACHE);
-		set.setSupportZoom(false);
+		
 		webview.loadUrl("http://www.mndcuration.com");
+		webview.setPadding(0, 0, 0, 0);
+		int PIC_WIDTH= webview.getRight()-webview.getLeft();
+		webview.setInitialScale(getScale(PIC_WIDTH));
+		WebSettings settings = webview.getSettings();
+		
+    settings.setJavaScriptEnabled(true);
+    settings.setLoadWithOverviewMode(true);
+    
 		webview.setWebViewClient(new WebClient());
 	}
-
-
+	private int getScale(int PIC_WIDTH){
+		Point p = new Point();
+	    Display display = ((WindowManager) getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay(); 
+	    display.getSize(p);
+	    int width = p.x;
+	    Double val = new Double(width)/new Double(PIC_WIDTH);
+	    val = val * 100d;
+	    return val.intValue();
+	}
+	
 	@Override
 	public void onConfigurationChanged(Configuration newConfig) {
 		// TODO Auto-generated method stub
@@ -77,6 +96,7 @@ public class MainActivity extends Activity {
 
 	
 	private class WebClient extends WebViewClient {
+		
 		@Override
 		public boolean shouldOverrideUrlLoading(WebView view, String url) {
 
